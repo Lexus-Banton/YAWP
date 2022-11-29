@@ -2,15 +2,15 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
-const UserService = require('../lib/services/UserService');
+// const UserService = require('../lib/services/UserService');
 
-//Dummy user
-const mockUser = {
-  firstName: 'Test',
-  lastName: 'User',
-  email: 'test@example.com',
-  password: '12345',
-};
+// //Dummy user
+// const mockUser = {
+//   firstName: 'Test',
+//   lastName: 'User',
+//   email: 'test@example.com',
+//   password: '12345',
+// };
 
 describe('restaurants routes', () => {
   beforeEach(() => {
@@ -60,15 +60,11 @@ describe('restaurants routes', () => {
       ]
     `);
   });
-});
 
-it('GET api/v1/restaurants/:restId shows restaurant detail', async () => {
-  const resp = await request(app).get(
-    '/api/v1/restaurants/:restId should show restaurant detail with nested reviews',
-    async () => {
-      const resp = await request(app).get('/api/v1/restaurants/1');
-      expect(resp.status).toBe(200);
-      //expect(resp.body).toMatchInlineSnapshot();
-    }
-  );
+  it('GET api/v1/restaurants/:restId shows restaurant detail', async () => {
+    const resp = await request(app).get('/api/v1/restaurants/1');
+    console.log(resp.body);
+    expect(resp.status).toBe(200);
+    //expect(resp.body).toMatchInlineSnapshot();
+  });
 });
