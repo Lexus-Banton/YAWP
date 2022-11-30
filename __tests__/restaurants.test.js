@@ -108,6 +108,10 @@ describe('restaurants routes', () => {
   };
   it('post /api/v1/:restId/reviews creates a new review', async () => {
     const [agent] = await registerAndLogin();
-    const resp = await agent;
+    const resp = await agent
+      .post('/api/v1/restaurants/1/reviews')
+      .send({ detail: 'This is a new Review' });
+    expect(resp.status).toBe(200);
+    //expect(resp.body).toMatchInlineSnapshot()
   });
 });
