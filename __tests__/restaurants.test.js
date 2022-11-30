@@ -2,15 +2,15 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
-// const UserService = require('../lib/services/UserService');
+const UserService = require('../lib/services/UserService');
 
-// //Dummy user
-// const mockUser = {
-//   firstName: 'Test',
-//   lastName: 'User',
-//   email: 'test@example.com',
-//   password: '12345',
-// };
+//Dummy user
+const mockUser = {
+  firstName: 'Test',
+  lastName: 'User',
+  email: 'test@example.com',
+  password: '12345',
+};
 
 describe('restaurants routes', () => {
   beforeEach(() => {
@@ -63,8 +63,51 @@ describe('restaurants routes', () => {
 
   it('GET api/v1/restaurants/:restId shows restaurant detail', async () => {
     const resp = await request(app).get('/api/v1/restaurants/1');
-    console.log(resp.body);
     expect(resp.status).toBe(200);
-    //expect(resp.body).toMatchInlineSnapshot();
+    expect(resp.body).toMatchInlineSnapshot(`
+      Object {
+        "cost": 1,
+        "cuisine": "American",
+        "id": "1",
+        "image": "https://media-cdn.tripadvisor.com/media/photo-o/05/dd/53/67/an-assortment-of-donuts.jpg",
+        "name": "Pip's Original",
+        "reviews": Array [
+          Object {
+            "detail": "Best restaurant ever!",
+            "id": "1",
+            "restaurant_id": "1",
+            "stars": 5,
+            "user_id": "1",
+          },
+          Object {
+            "detail": "Terrible service :(",
+            "id": "2",
+            "restaurant_id": "1",
+            "stars": 1,
+            "user_id": "2",
+          },
+          Object {
+            "detail": "It was fine.",
+            "id": "3",
+            "restaurant_id": "1",
+            "stars": 4,
+            "user_id": "3",
+          },
+        ],
+        "website": "http://www.PipsOriginal.com",
+      }
+    `);
+  });
+  const registerAndLogin = async () => {
+    const agent = request.agent(app);
+    const user = await UserService.create(mockUser);
+    await agent
+      .post('/api/v1/users/sessions')
+      .send({ email: mockUser.email, password: mockUser.password });
+    return [agent, user];
+  };
+  it('post /api/v1/:restId/reviews creates a new review', async () => {
+    const [agent] = await registerAndLogin();
+    const resp = await agent;
   });
 });
