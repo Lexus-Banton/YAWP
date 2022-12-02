@@ -12,6 +12,14 @@ const mockUser = {
   password: '12345',
 };
 
+const registerAndLogin = async () => {
+  const agent = request.agent(app);
+  const user = await UserService.create(mockUser);
+  await agent
+    .post('/api/v1/users/sessions')
+    .send({ email: mockUser.email, password: mockUser.password });
+  return [agent, user];
+};
 describe('restaurants routes', () => {
   beforeEach(() => {
     return setup(pool);
@@ -98,20 +106,21 @@ describe('restaurants routes', () => {
       }
     `);
   });
-  const registerAndLogin = async () => {
-    const agent = request.agent(app);
-    const user = await UserService.create(mockUser);
-    await agent
-      .post('/api/v1/users/sessions')
-      .send({ email: mockUser.email, password: mockUser.password });
-    return [agent, user];
-  };
   it('post /api/v1/:restId/reviews creates a new review', async () => {
     const [agent] = await registerAndLogin();
     const resp = await agent
       .post('/api/v1/restaurants/1/reviews')
-      .send({ detail: 'This is a new Review' });
+      .send({ detail: 'This is a new Review', stars: 5 });
     expect(resp.status).toBe(200);
-    //expect(resp.body).toMatchInlineSnapshot()
+    expect(resp.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": "This is a new Review",
+        "id": "4",
+        "restaurant_id": "1",
+        "stars": 5,
+        "user_id": "4",
+      }
+    `);
   });
+  it('delete /api/v1/reviews/:id deletes a review', async () => {});
 });
