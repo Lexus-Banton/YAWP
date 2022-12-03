@@ -122,5 +122,16 @@ describe('restaurants routes', () => {
       }
     `);
   });
-  it('delete /api/v1/reviews/:id deletes a review', async () => {});
+  it('delete /api/v1/reviews/:id deletes a review', async () => {
+    const [agent] = await registerAndLogin();
+    const insertResponse = await agent
+      .post('/api/v1/restaurants/1/reviews')
+      .send({ detail: 'delete this bruh', stars: 5 });
+
+    const resp = await agent.delete(
+      `/api/v1/reviews/${insertResponse.body.id}`
+    );
+
+    expect(resp.status).toBe(200);
+  });
 });
